@@ -1,0 +1,11 @@
+{
+    "required": true,
+    "package": "user11681.cell.asm.mixin",
+    "compatibilityLevel": "JAVA_14",
+    "injectors": {
+        "defaultRequire": 1
+    },
+    "mixins": [
+        "TestMixin"
+    ]
+}

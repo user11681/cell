@@ -1,0 +1,15 @@
+plugins {
+    id("loom").version("snapshot")
+}
+
+project.group = "user11681"
+project.version = "0.0.0"
+
+minecraft {
+    accessWidener("src/main/resources/cell.accesswidener")
+}
+
+dependencies {
+    modInclude("api-base")
+    modInclude("api-resource-loader")
+}
