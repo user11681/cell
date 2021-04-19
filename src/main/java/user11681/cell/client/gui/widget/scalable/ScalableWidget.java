@@ -7,7 +7,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import user11681.cell.client.gui.CellElement;
 import user11681.cell.client.gui.widget.Widget;
 
-@SuppressWarnings("deprecation")
 @Environment(EnvType.CLIENT)
 public class ScalableWidget extends Widget<ScalableWidget> {
     public ScalableTextureInfo texture;
@@ -20,32 +19,32 @@ public class ScalableWidget extends Widget<ScalableWidget> {
     public float b = 1;
     public float a = 1;
 
-    public ScalableWidget textureWidth(final int textureWidth) {
+    public ScalableWidget textureWidth(int textureWidth) {
         this.textureWidth = textureWidth;
 
         return this;
     }
 
-    public ScalableWidget textureHeight(final int textureHeight) {
+    public ScalableWidget textureHeight(int textureHeight) {
         this.textureHeight = textureHeight;
 
         return this;
     }
 
-    public ScalableWidget texture(final ScalableTextureInfo texture) {
+    public ScalableWidget texture(ScalableTextureInfo texture) {
         this.texture = texture;
 
         return this;
     }
 
-    public void color3f(final float r, final float g, final float b) {
+    public void color3f(float r, float g, float b) {
         this.r = r;
         this.g = g;
         this.b = b;
         this.a = 1;
     }
 
-    public void color4f(final float r, final float g, final float b, final float a) {
+    public void color4f(float r, float g, float b, float a) {
         this.r = r;
         this.g = g;
         this.b = b;
@@ -53,7 +52,7 @@ public class ScalableWidget extends Widget<ScalableWidget> {
     }
 
     @Override
-    public void renderBackground(final MatrixStack matrices, final int mouseX, final int mouseY, final float delta) {
+    public void renderBackground(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         this.texture.texture.bindTexture();
         this.resetColor();
 
@@ -67,9 +66,9 @@ public class ScalableWidget extends Widget<ScalableWidget> {
         }
     }
 
-    protected void renderCorners(final MatrixStack matrices) {
-        final ScalableTextureInfo info = this.texture;
-        final int[][][] corners = info.corners;
+    protected void renderCorners(MatrixStack matrices) {
+        ScalableTextureInfo info = this.texture;
+        int[][][] corners = info.corners;
 
         for (int i = 0, length = corners.length; i < length; ++i) {
             int[][] corner = corners[i];
@@ -83,12 +82,12 @@ public class ScalableWidget extends Widget<ScalableWidget> {
         }
     }
 
-    protected void renderMiddles(final MatrixStack matrices) {
-        final ScalableTextureInfo info = this.texture;
-        final int[][][] middles = info.middles;
-        final int[][][] corners = info.corners;
-        final int middleWidth = this.width - corners[0][1][0] + corners[1][0][0] - corners[1][1][0];
-        final int middleHeight = this.height - corners[0][2][1] + corners[2][0][1] - corners[2][2][1];
+    protected void renderMiddles(MatrixStack matrices) {
+        ScalableTextureInfo info = this.texture;
+        int[][][] middles = info.middles;
+        int[][][] corners = info.corners;
+        int middleWidth = this.width - corners[0][1][0] + corners[1][0][0] - corners[1][1][0];
+        int middleHeight = this.height - corners[0][2][1] + corners[2][0][1] - corners[2][2][1];
 
         for (int i = 0, length = middles.length; i < length; ++i) {
             int[][] middle = middles[i];
@@ -116,7 +115,7 @@ public class ScalableWidget extends Widget<ScalableWidget> {
         }
     }
 
-    protected void drawBorder(final MatrixStack matrices) {
+    protected void drawBorder(MatrixStack matrices) {
         int endX = this.getX() + this.width - 1;
         int endY = this.getY() + this.height;
 
@@ -130,11 +129,11 @@ public class ScalableWidget extends Widget<ScalableWidget> {
 
     protected void resetColor() {
         if (this.active) {
-            RenderSystem.color4f(this.r, this.g, this.b, this.a);
+            RenderSystem.setShaderColor(this.r, this.g, this.b, this.a);
         } else {
-            final float chroma = 160F / 255;
+            float chroma = 160F / 255;
 
-            RenderSystem.color4f(this.r * chroma, this.g * chroma, this.b * chroma, this.a);
+            RenderSystem.setShaderColor(this.r * chroma, this.g * chroma, this.b * chroma, this.a);
         }
     }
 }

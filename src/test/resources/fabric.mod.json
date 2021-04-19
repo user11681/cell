@@ -1,0 +1,11 @@
+{
+    "schemaVersion": 1,
+    "id": "test",
+    "version": "0",
+
+    "entrypoints": {
+        "main": ["test.Test::init"]
+    },
+
+    "mixins": ["mixins.json"]
+}

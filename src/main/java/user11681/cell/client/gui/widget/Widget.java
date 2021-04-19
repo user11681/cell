@@ -1,15 +1,15 @@
 package user11681.cell.client.gui.widget;
 
+import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.font.TextHandler;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
-import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.LiteralText;
@@ -23,13 +23,9 @@ import user11681.cell.client.gui.widget.callback.TextProvider;
 import user11681.cell.client.gui.widget.callback.TooltipProvider;
 import user11681.cell.client.gui.widget.callback.TooltipRenderer;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 @SuppressWarnings("unchecked")
 @Environment(EnvType.CLIENT)
 public abstract class Widget<T extends Widget<T>> extends CellElement {
-    protected static final TextureManager textureManager = Cell.client.getTextureManager();
     protected static final SoundManager soundManager = Cell.client.getSoundManager();
     protected static final TextRenderer textRenderer = Cell.client.textRenderer;
     protected static final TextHandler textHandler = textRenderer.getTextHandler();
@@ -53,77 +49,66 @@ public abstract class Widget<T extends Widget<T>> extends CellElement {
 
     protected abstract void renderBackground(MatrixStack matrices, int mouseX, int mouseY, float delta);
 
-    public T x(final int x) {
+    public T x(int x) {
         this.x = x;
-
         this.modified = true;
 
         return (T) this;
     }
 
-    public T y(final int y) {
+    public T y(int y) {
         this.y = y;
-
         this.modified = true;
 
         return (T) this;
     }
 
-    public T width(final int width) {
+    public T width(int width) {
         this.width = width;
-
         this.modified = true;
 
         return (T) this;
     }
 
-    public T height(final int height) {
+    public T height(int height) {
         this.height = height;
-
         this.modified = true;
 
         return (T) this;
     }
 
-    public T center(final boolean center) {
+    public T center(boolean center) {
         this.center = center;
 
         return (T) this;
     }
 
-    public T text(final String text) {
-        this.text = new TranslatableText(text);
-
-        this.modified = true;
-
-        return (T) this;
+    public T text(String text) {
+        return this.text(new TranslatableText(text));
     }
 
-    public T text(final Text text) {
+    public T text(Text text) {
         this.text = text;
-
         this.modified = true;
 
         return (T) this;
     }
 
-    public T primaryAction(final PressCallback<T> action) {
+    public T primaryAction(PressCallback<T> action) {
         this.primaryAction = action;
-
         this.modified = true;
 
         return (T) this;
     }
 
-    public T secondaryAction(final PressCallback<T> action) {
+    public T secondaryAction(PressCallback<T> action) {
         this.secondaryAction = action;
-
         this.modified = true;
 
         return (T) this;
     }
 
-    public T tertiaryAction(final PressCallback<T> action) {
+    public T tertiaryAction(PressCallback<T> action) {
         this.tertiaryAction = action;
 
         this.modified = true;
@@ -131,49 +116,28 @@ public abstract class Widget<T extends Widget<T>> extends CellElement {
         return (T) this;
     }
 
-    public T tooltip(final String tooltip) {
-        this.tooltipRenderer = (TextProvider<T>) (final T widget, final int mouseX, final int mouseY) -> new TranslatableText(tooltip);
-
-        this.modified = true;
-
-        return (T) this;
+    public T tooltip(String tooltip) {
+        return this.tooltip((T widget, int mouseX, int mouseY) -> new TranslatableText(tooltip));
     }
 
-    public T tooltip(final Text tooltip) {
-        this.tooltipRenderer = (TextProvider<T>) (final T widget, final int mouseX, final int mouseY) -> tooltip;
-
-        this.modified = true;
-
-        return (T) this;
+    public T tooltip(Text... tooltip) {
+        return this.tooltip(Arrays.asList(tooltip));
     }
 
-    public T tooltip(final Text... tooltip) {
-        this.tooltipRenderer = (TooltipProvider<T>) (final T widget, final int mouseX, final int mouseY) -> Arrays.asList(tooltip);
-
-        this.modified = true;
-
-        return (T) this;
+    public T tooltip(List<Text> tooltip) {
+        return this.tooltip((T widget, int mouseX, int mouseY) -> tooltip);
     }
 
-    public T tooltip(final List<Text> tooltip) {
-        this.tooltipRenderer = (TooltipProvider<T>) (final T widget, final int mouseX, final int mouseY) -> tooltip;
-
-        this.modified = true;
-
-        return (T) this;
+    public T tooltip(TooltipProvider<T> tooltipProvider) {
+        return this.tooltip((TooltipRenderer<T>) tooltipProvider);
     }
 
-    public T tooltip(final TooltipProvider<T> tooltipProvider) {
-        this.tooltipRenderer = tooltipProvider;
-
-        this.modified = true;
-
-        return (T) this;
+    public T tooltip(TextProvider<T> textProvider) {
+        return this.tooltip((TooltipRenderer<T>) textProvider);
     }
 
-    public T tooltip(final TextProvider<T> tooltipSupplier) {
-        this.tooltipRenderer = tooltipSupplier;
-
+    public T tooltip(TooltipRenderer<T> renderer) {
+        this.tooltipRenderer = renderer;
         this.modified = true;
 
         return (T) this;
@@ -206,7 +170,7 @@ public abstract class Widget<T extends Widget<T>> extends CellElement {
     }
 
     @Override
-    public boolean changeFocus(final boolean lookForwards) {
+    public boolean changeFocus(boolean lookForwards) {
         super.changeFocus(lookForwards);
 
         if (this.active && this.visible) {
@@ -226,7 +190,7 @@ public abstract class Widget<T extends Widget<T>> extends CellElement {
     public void tick() {}
 
     @Override
-    public void render(final MatrixStack matrices, final int mouseX, final int mouseY, final float delta) {
+    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         if (this.modified) {
             this.compute();
         }
@@ -249,20 +213,20 @@ public abstract class Widget<T extends Widget<T>> extends CellElement {
         this.renderForeground(matrices, mouseX, mouseY, delta);
     }
 
-    public void renderForeground(final MatrixStack matrices, final int mouseX, final int mouseY, final float delta) {
+    public void renderForeground(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         if (this.text != null) {
             drawCenteredText(matrices, textRenderer, this.text, this.getX() + this.width / 2, this.getY() + this.height / 2 - textRenderer.fontHeight / 2, 0xFFFFFF);
         }
     }
 
-    public void renderTooltip(final MatrixStack matrices, final int mouseX, final int mouseY) {
+    public void renderTooltip(MatrixStack matrices, int mouseX, int mouseY) {
         if (this.hovered && this.tooltipRenderer != null) {
             this.tooltipRenderer.render((T) this, matrices, mouseX, mouseY);
         }
     }
 
     @Override
-    public boolean mouseClicked(final double mouseX, final double mouseY, final int button) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         super.mouseClicked(mouseX, mouseY, button);
 
         if (this.clicked(mouseX, mouseY)) {
@@ -288,12 +252,12 @@ public abstract class Widget<T extends Widget<T>> extends CellElement {
         return false;
     }
 
-    protected boolean clicked(final double mouseX, final double mouseY) {
+    protected boolean clicked(double mouseX, double mouseY) {
         return this.active && this.hovered;
     }
 
     @Override
-    public boolean keyPressed(final int keyCode, final int scanCode, final int modifiers) {
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (!super.keyPressed(keyCode, scanCode, modifiers) && this.selected) {
             if (this.isValidTertiaryKey(keyCode, scanCode, modifiers)) {
                 this.onTertiaryPress();
@@ -311,31 +275,31 @@ public abstract class Widget<T extends Widget<T>> extends CellElement {
         return false;
     }
 
-    public boolean isValidPrimaryClick(final int button) {
+    public boolean isValidPrimaryClick(int button) {
         return this.primaryAction != null && button == 0;
     }
 
-    public boolean isValidSecondaryClick(final int button) {
+    public boolean isValidSecondaryClick(int button) {
         return this.secondaryAction != null && button == 1;
     }
 
-    public boolean isValidTertiaryClick(final int button) {
+    public boolean isValidTertiaryClick(int button) {
         return this.tertiaryAction != null && button == 2;
     }
 
-    private boolean isValidSecondaryKey(final int keyCode, final int scanCode, final int modifiers) {
+    private boolean isValidSecondaryKey(int keyCode, int scanCode, int modifiers) {
         return this.secondaryAction != null && this.isValidKey(keyCode, scanCode, modifiers) && (modifiers & GLFW.GLFW_MOD_SHIFT) != 0;
     }
 
-    private boolean isValidTertiaryKey(final int keyCode, final int scanCode, final int modifiers) {
+    private boolean isValidTertiaryKey(int keyCode, int scanCode, int modifiers) {
         return this.tertiaryAction != null && this.isValidKey(keyCode, scanCode, modifiers) && (modifiers & GLFW.GLFW_MOD_CONTROL) != 0;
     }
 
-    public boolean isValidPrimaryKey(final int keyCode, final int scanCode, final int modifiers) {
+    public boolean isValidPrimaryKey(int keyCode, int scanCode, int modifiers) {
         return this.primaryAction != null && this.isValidKey(keyCode, scanCode, modifiers);
     }
 
-    public boolean isValidKey(final int keyCode, final int scanCode, final int modifiers) {
+    public boolean isValidKey(int keyCode, int scanCode, int modifiers) {
         return keyCode == GLFW.GLFW_KEY_SPACE || keyCode == GLFW.GLFW_KEY_ENTER;
     }
 

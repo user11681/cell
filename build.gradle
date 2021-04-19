@@ -1,15 +1,19 @@
 plugins {
-    id("loom").version("snapshot")
+    id("wheel").version("0-SNAPSHOT").apply(false)
 }
 
-project.group = "user11681"
-project.version = "0.0.0"
+group("user11681")
+version("0.0.0")
 
-minecraft {
+allprojects {
+    plugins.apply("wheel")
+
+    dependencies {
+        modInclude("api-base")
+        modInclude("api-resource-loader")
+    }
+}
+
+loom {
     accessWidener("src/main/resources/cell.accesswidener")
-}
-
-dependencies {
-    modInclude("api-base")
-    modInclude("api-resource-loader")
 }

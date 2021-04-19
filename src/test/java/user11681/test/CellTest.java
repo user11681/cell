@@ -35,7 +35,7 @@ class CellTest {
         }
     }
 
-    static void test(final Object format, final Runnable test) {
+    static void test(Object format, Runnable test) {
         final long time = System.nanoTime();
 
         for (int i = 0; i < tests; i++) {
@@ -45,13 +45,13 @@ class CellTest {
         addResult(format, (System.nanoTime() - time) / tests);
     }
 
-    static void addResult(final Object format, final Object... arguments) {
+    static void addResult(Object format, Object... arguments) {
         results.add(String.format(format.toString(), arguments));
     }
 
     @AfterAll
     static void logResults() {
-        for (final String result : results) {
+        for (String result : results) {
             LOGGER.warn(result);
         }
     }

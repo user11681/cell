@@ -14,12 +14,12 @@ import user11681.cell.client.gui.widget.scalable.ScalableWidgets;
 @Environment(EnvType.CLIENT)
 public abstract class ScreenTab extends CellScreen {
     protected final List<ScreenTab> tabs;
-    protected final List<Widget> tabButtons;
+    protected final List<Widget<?>> tabButtons;
     protected final int index;
 
-    protected Widget tab;
+    protected Widget<?> tab;
 
-    public ScreenTab(final Text title, final List<ScreenTab> tabs) {
+    public ScreenTab(Text title, List<ScreenTab> tabs) {
         super(title);
 
         this.tabs = tabs;
@@ -40,7 +40,7 @@ public abstract class ScreenTab extends CellScreen {
 
         if (this.displayTabs()) {
             for (int index = 0, size = this.tabs.size(); index < size; index++) {
-                final ScalableWidget button = this.add(this.tabs.get(index).getButton());
+                ScalableWidget button = this.add(this.tabs.get(index).getButton());
 
                 this.tabButtons.add(button);
 
@@ -53,16 +53,13 @@ public abstract class ScreenTab extends CellScreen {
     }
 
     protected ScalableWidget getButton() {
-        final ScalableWidget button = ScalableWidgets.button()
+        return ScalableWidgets.button()
             .text(this.getLabel())
             .x(this.width / 24)
             .y(this.height / 16 + this.index * Math.max(this.height / 16, 30))
             .width(Math.max(96, Math.round(width / 7.5F)))
-            .height(20);
-
-        button.primaryAction(this.setTabAction(index));
-
-        return button;
+            .height(20)
+            .primaryAction(this.setTabAction(index));
     }
 
     protected boolean displayTabs() {
@@ -70,13 +67,13 @@ public abstract class ScreenTab extends CellScreen {
     }
 
     @Override
-    public boolean mouseClicked(final double mouseX, final double mouseY, final int button) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         super.mouseClicked(mouseX, mouseY, button);
         return false;
     }
 
     @Override
-    public boolean mouseScrolled(final double x, final double y, final double dWheel) {
+    public boolean mouseScrolled(double x, double y, double dWheel) {
         if (dWheel != 0) {
             final int index = MathHelper.clamp((int) (this.index - dWheel), 0, this.tabs.size() - 1);
 
@@ -90,7 +87,7 @@ public abstract class ScreenTab extends CellScreen {
         return super.mouseScrolled(x, y, dWheel);
     }
 
-    public void setTab(final int tab) {
+    public void setTab(int tab) {
         client.openScreen(this.tabs.get(tab));
     }
 
@@ -100,23 +97,23 @@ public abstract class ScreenTab extends CellScreen {
         this.init(this.client, this.width, this.height);
     }
 
-    public int getTop(final int rows) {
+    public int getTop(int rows) {
         return this.getTop(this.height / 16, rows);
     }
 
-    public int getTop(final int sep, final int rows) {
+    public int getTop(int sep, int rows) {
         return (this.height - (rows - 1) * sep) / 2;
     }
 
-    public int getHeight(final int rows, final int row) {
+    public int getHeight(int rows, int row) {
         return this.getTop(rows) + row * this.height / 16;
     }
 
-    public int getHeight(final int sep, final int rows, final int row) {
+    public int getHeight(int sep, int rows, int row) {
         return this.getTop(rows, sep) + row * sep;
     }
 
-    protected <T extends Widget<T>> PressCallback<T> setTabAction(final int index) {
-        return (final T button) -> this.setTab(index);
+    protected <T extends Widget<T>> PressCallback<T> setTabAction(int index) {
+        return (T button) -> this.setTab(index);
     }
 }

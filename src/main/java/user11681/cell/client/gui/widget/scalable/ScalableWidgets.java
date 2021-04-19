@@ -7,8 +7,8 @@ public final class ScalableWidgets {
     private static final Identifier advancementWidgets = new Identifier("textures/gui/advancements/widgets.png");
     private static final Identifier window = new Identifier("textures/gui/advancements/window.png");
 
-    private static final ScalableTextureInfo inactiveButtonInfo = new ScalableTextureInfo(0, 46, 1, 199, 200, 1, 19, 20, widgets);
-    private static final ScalableTextureInfo windowInfo = new ScalableTextureInfo(14, 238, 252, 22, 126, 140, window);
+    private static final ScalableTextureInfo inactiveButtonInfo = new ScalableTextureInfo().texture(widgets).position(0, 46).slices(1, 199, 200, 1, 19, 20);
+    private static final ScalableTextureInfo windowInfo = new ScalableTextureInfo().texture(window).slices(14, 238, 252, 22, 126, 140);
 
     public static ScalableWidget yellowRectangle() {
         return longRectangle(0);
@@ -50,23 +50,23 @@ public final class ScalableWidgets {
         return button(1);
     }
 
-    public static ScalableWidget longRectangle(final int index) {
-        return new ScalableWidget().texture(new ScalableTextureInfo(0, 3 + index * 26, 2, 198, 200, 2, 18, 20, advancementWidgets));
+    public static ScalableWidget longRectangle(int index) {
+        return new ScalableWidget().texture(new ScalableTextureInfo().texture(advancementWidgets).position(0, 3 + index * 26).slices(2, 198, 200, 2, 18, 20));
     }
 
-    public static ScalableWidget rectangle(final int index) {
-        return new ScalableWidget().texture(new ScalableTextureInfo(1, 129 + index * 26, 2, 22, 24, 2, 22, 24, advancementWidgets));
+    public static ScalableWidget rectangle(int index) {
+        return new ScalableWidget().texture(new ScalableTextureInfo().texture(advancementWidgets).position(1, 129 + index * 26).slices(2, 22, 24, 2, 22, 24));
     }
 
-    public static ScalableWidget spikedRectangle(final int index) {
-        return new ScalableWidget().texture(new ScalableTextureInfo(26, 128 + index * 26, 10, 16, 26, 10, 16, 26, advancementWidgets));
+    public static ScalableWidget spikedRectangle(int index) {
+        return new ScalableWidget().texture(new ScalableTextureInfo().texture(advancementWidgets).position(26, 128 + index * 26).slices(10, 16, 26, 10, 16, 26));
     }
 
-    public static ScalableWidget roundedRectangle(final int index) {
-        return new ScalableWidget().texture(new ScalableTextureInfo(54, 129 + index * 26, 7, 15, 22, 4, 21, 26, advancementWidgets));
+    public static ScalableWidget roundedRectangle(int index) {
+        return new ScalableWidget().texture(new ScalableTextureInfo().texture(advancementWidgets).position(54, 129 + index * 26).slices(7, 15, 22, 4, 21, 26));
     }
 
-    public static ScalableWidget button(final int index) {
-        return new ScalableWidget().texture(new ScalableTextureInfo(0, 46 + index * 20, 2, 198, 200, 2, 17, 20, widgets));
+    public static ScalableWidget button(int index) {
+        return new ScalableWidget().texture(new ScalableTextureInfo().texture(widgets).position(0, 46 + index * 20).slices(2, 198, 200, 2, 17, 20));
     }
 }

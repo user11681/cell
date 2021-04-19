@@ -62,14 +62,14 @@ public abstract class AbstractTextBoxWidget<T extends AbstractTextBoxWidget<T>> 
     }
 
     @Override
-    public void render(final MatrixStack matrices, final int mouseX, final int mouseY, final float delta) {
+    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         super.render(matrices, mouseX, mouseY, delta);
 
         this.renderText(matrices);
         this.renderCaret(matrices);
     }
 
-    protected void renderText(final MatrixStack matrices) {
+    protected void renderText(MatrixStack matrices) {
         final List<StringVisitable> lines = this.lines;
 
         for (int i = 0, size = lines.size(); i < size; i++) {
@@ -79,16 +79,16 @@ public abstract class AbstractTextBoxWidget<T extends AbstractTextBoxWidget<T>> 
         }
     }
 
-    protected void renderCaret(final MatrixStack matrices) {
+    protected void renderCaret(MatrixStack matrices) {
         textRenderer.draw(matrices, Caret.UNDERSCORE.character, this.caretX, this.caretY, 0xFFFFFF);
     }
 
-    protected int getY(final int line) {
+    protected int getY(int line) {
         return this.textY + line * (textRenderer.fontHeight + 3);
     }
 
     @Override
-    public boolean keyPressed(int keyCode, final int scanCode, final int modifiers) {
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (super.keyPressed(keyCode, scanCode, modifiers)) {
             return true;
         }
@@ -203,11 +203,11 @@ public abstract class AbstractTextBoxWidget<T extends AbstractTextBoxWidget<T>> 
 
         final Text character;
 
-        Caret(final String character) {
+        Caret(String character) {
             this(new LiteralText(character));
         }
 
-        Caret(final Text character) {
+        Caret(Text character) {
             this.character = character;
         }
     }

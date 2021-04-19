@@ -1,10 +1,11 @@
 package user11681.cell.client.gui.screen;
 
-import java.util.Collection;
-import java.util.List;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
+import java.util.Collection;
+import java.util.List;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
@@ -17,10 +18,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import user11681.cell.Cell;
 import user11681.cell.client.gui.DrawableElement;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 
 @SuppressWarnings("unchecked")
 @Environment(EnvType.CLIENT)
@@ -31,7 +30,7 @@ public abstract class CellScreen extends Screen implements DrawableElement {
         this(LiteralText.EMPTY);
     }
 
-    protected CellScreen(final Text title) {
+    protected CellScreen(Text title) {
         super(title);
     }
 
@@ -39,34 +38,34 @@ public abstract class CellScreen extends Screen implements DrawableElement {
     public void tick() {
         super.tick();
 
-        for (final DrawableElement element : this.elements) {
+        for (DrawableElement element : this.elements) {
             element.tick();
         }
     }
 
     @Override
-    public void render(final MatrixStack matrices, final int mouseX, final int mouseY, final float delta) {
+    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         super.render(matrices, mouseX, mouseY, delta);
 
-        for (final DrawableElement element : this.elements) {
+        for (DrawableElement element : this.elements) {
             element.render(matrices, mouseX, mouseY, delta);
         }
     }
 
-    protected <T extends DrawableElement> T add(final T element) {
+    protected <T extends DrawableElement> T add(T element) {
         this.elements.add(element);
 
         return element;
     }
 
-    protected <T extends DrawableElement> void add(final T... elements) {
-        for (final T element : elements) {
+    protected <T extends DrawableElement> void add(T... elements) {
+        for (T element : elements) {
             this.add(element);
         }
     }
 
-    protected <T extends Collection<U>, U extends DrawableElement> void add(final T elements) {
-        for (final U element : elements) {
+    protected <T extends Collection<U>, U extends DrawableElement> void add(T elements) {
+        for (U element : elements) {
             this.add(element);
         }
     }
@@ -76,42 +75,42 @@ public abstract class CellScreen extends Screen implements DrawableElement {
         return this.elements;
     }
 
-    protected <T extends AbstractButtonWidget> void removeButtons(final T... buttons) {
-        for (final T button : buttons) {
+    protected <T extends AbstractButtonWidget> void removeButtons(T... buttons) {
+        for (T button : buttons) {
             this.removeButton(button);
         }
     }
 
-    protected <T extends Collection<U>, U extends AbstractButtonWidget> void removeButtons(final T buttons) {
+    protected <T extends Collection<U>, U extends AbstractButtonWidget> void removeButtons(T buttons) {
         this.buttons.removeAll(buttons);
     }
 
-    protected <T extends AbstractButtonWidget> void removeButton(final T button) {
+    protected <T extends AbstractButtonWidget> void removeButton(T button) {
         this.buttons.remove(button);
     }
 
     @Override
-    protected <T extends AbstractButtonWidget> T addButton(final T button) {
+    protected <T extends AbstractButtonWidget> T addButton(T button) {
         return super.addButton(button);
     }
 
-    public void renderBackground(final Identifier identifier, int x, int y, final int width, final int height) {
+    public void renderBackground(Identifier identifier, int x, int y, int width, int height) {
         this.renderBackground(identifier, x, y, width, height, 64, 0);
     }
 
-    public void renderBackground(final Identifier identifier, int x, int y, final int width, final int height, final int chroma) {
+    public void renderBackground(Identifier identifier, int x, int y, int width, int height, int chroma) {
         this.renderBackground(identifier, x, y, width, height, chroma, 0);
     }
 
-    public void renderBackground(final Identifier identifier, final int x, final int y, final int width, final int height, final int chroma, final int alpha) {
-        final Tessellator tessellator = Tessellator.getInstance();
-        final BufferBuilder builder = tessellator.getBuffer();
-        final float f = 1 << 5;
-        final float endX = x + width;
-        final float endY = y + height;
+    public void renderBackground(Identifier identifier, int x, int y, int width, int height, int chroma, int alpha) {
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder builder = tessellator.getBuffer();
+        float f = 1 << 5;
+        float endX = x + width;
+        float endY = y + height;
 
-        textureManager.bindTexture(identifier);
-        RenderSystem.color4f(1, 1, 1, 1);
+        Cell.textureManager.bindTexture(identifier);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
 
         builder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE);
         builder.vertex(x, endY, 0).color(chroma, chroma, chroma, 255).texture(0, endY / f + alpha).next();
@@ -122,11 +121,11 @@ public abstract class CellScreen extends Screen implements DrawableElement {
         tessellator.draw();
     }
 
-    public void renderGuiItem(final ItemStack itemStack, final int x, final int y, final int z) {
+    public void renderGuiItem(ItemStack itemStack, int x, int y, int z) {
         this.withZ(z, () -> this.itemRenderer.renderGuiItemIcon(itemStack, x, y));
     }
 
-    public void withZ(final int z, final Runnable runnable) {
+    public void withZ(int z, Runnable runnable) {
         this.addZOffset(z);
         this.itemRenderer.zOffset = this.getZOffset();
         runnable.run();
@@ -134,7 +133,7 @@ public abstract class CellScreen extends Screen implements DrawableElement {
         this.itemRenderer.zOffset = this.getZOffset();
     }
 
-    public void addZOffset(final int z) {
+    public void addZOffset(int z) {
         this.zOffset += z;
         this.itemRenderer.zOffset += z;
     }

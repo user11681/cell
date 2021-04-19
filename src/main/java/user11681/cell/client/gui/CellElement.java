@@ -21,11 +21,11 @@ public abstract class CellElement extends AbstractParentElement implements Drawa
     public int width;
     public int height;
 
-    public static void fill(final MatrixStack matrices, final int x1, final int y1, final int x2, final int y2, final float z, final int color) {
+    public static void fill(MatrixStack matrices, int x1, int y1, int x2, int y2, float z, int color) {
         fill(matrices.peek().getModel(), x1, y1, x2, y2, z, color);
     }
 
-    public static void fill(final Matrix4f matrix, int x1, int y1, int x2, int y2, final float z, final int color) {
+    public static void fill(Matrix4f matrix, int x1, int y1, int x2, int y2, float z, int color) {
         int i;
 
         if (x1 < x2) {
@@ -62,7 +62,7 @@ public abstract class CellElement extends AbstractParentElement implements Drawa
         RenderSystem.disableBlend();
     }
 
-    public static void drawHorizontalLine(final MatrixStack matrices, int x1, int x2, final int y, final int z, final int color) {
+    public static void drawHorizontalLine(MatrixStack matrices, int x1, int x2, int y, int z, int color) {
         if (x2 < x1) {
             final int i = x1;
 
@@ -73,7 +73,7 @@ public abstract class CellElement extends AbstractParentElement implements Drawa
         fill(matrices, x1, y, x2 + 1, y + 1, z, color);
     }
 
-    public static void drawVerticalLine(MatrixStack matrices, int x, int y1, int y2, final int z, final int color) {
+    public static void drawVerticalLine(MatrixStack matrices, int x, int y1, int y2, int z, int color) {
         if (y2 < y1) {
             final int i = y1;
 
@@ -88,7 +88,7 @@ public abstract class CellElement extends AbstractParentElement implements Drawa
     protected CellElement clone() {
         try {
             return (CellElement) super.clone();
-        } catch (final CloneNotSupportedException exception) {
+        } catch (CloneNotSupportedException exception) {
             throw new InternalError(exception);
         }
     }
