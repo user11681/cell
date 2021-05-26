@@ -29,6 +29,8 @@ repositories {
 
 dependencies {
     minecraft("net.minecraftforge:forge:1.16.5-36.1.23")
+
+    testImplementation("org.junit.jupiter:junit-jupiter:+")
 }
 
 minecraft {
