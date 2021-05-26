@@ -1,13 +1,13 @@
 package user11681.cell.client.gui.widget.scalable;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import user11681.cell.client.gui.CellElement;
 import user11681.cell.client.gui.widget.Widget;
 
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class ScalableWidget extends Widget<ScalableWidget> {
     public ScalableTextureInfo texture;
 
@@ -53,7 +53,7 @@ public class ScalableWidget extends Widget<ScalableWidget> {
 
     @Override
     public void renderBackground(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        this.texture.texture.bindTexture();
+        this.texture.texture.bind();
         this.resetColor();
 
         RenderSystem.enableBlend();
@@ -78,7 +78,7 @@ public class ScalableWidget extends Widget<ScalableWidget> {
             int width = corner[1][0] - u;
             int height = corner[2][1] - v;
 
-            drawTexture(matrices, this.getX() + i % 2 * (this.width - width), this.getY() + i / 2 * (this.height - height), this.getZOffset(), info.u + u, info.v + v, width, height, this.textureHeight, this.textureWidth);
+            blit(matrices, this.getX() + i % 2 * (this.width - width), this.getY() + i / 2 * (this.height - height), this.getBlitOffset(), info.u + u, info.v + v, width, height, this.textureHeight, this.textureWidth);
         }
     }
 
@@ -109,7 +109,7 @@ public class ScalableWidget extends Widget<ScalableWidget> {
                 for (int drawnWidth, y = endY - remainingHeight; remainingWidth > 0; remainingWidth -= drawnWidth) {
                     drawnWidth = Math.min(remainingWidth, maxWidth);
 
-                    drawTexture(matrices, endX - remainingWidth, y, this.getZOffset(), absoluteU, absoluteV, drawnWidth, drawnHeight, this.textureHeight, this.textureWidth);
+                    blit(matrices, endX - remainingWidth, y, this.getBlitOffset(), absoluteU, absoluteV, drawnWidth, drawnHeight, this.textureHeight, this.textureWidth);
                 }
             }
         }
@@ -119,21 +119,21 @@ public class ScalableWidget extends Widget<ScalableWidget> {
         int endX = this.getX() + this.width - 1;
         int endY = this.getY() + this.height;
 
-        CellElement.drawHorizontalLine(matrices, this.getX(), endX, this.getY(), this.getZOffset(), -1);
-        CellElement.drawVerticalLine(matrices, this.getX(), this.getY(), endY, this.getZOffset(), -1);
-        CellElement.drawVerticalLine(matrices, endX, this.getY(), endY, this.getZOffset(), -1);
-        CellElement.drawHorizontalLine(matrices, this.getX(), endX, endY - 1, this.getZOffset(), -1);
+        CellElement.drawHorizontalLine(matrices, this.getX(), endX, this.getY(), this.getBlitOffset(), -1);
+        CellElement.drawVerticalLine(matrices, this.getX(), this.getY(), endY, this.getBlitOffset(), -1);
+        CellElement.drawVerticalLine(matrices, endX, this.getY(), endY, this.getBlitOffset(), -1);
+        CellElement.drawHorizontalLine(matrices, this.getX(), endX, endY - 1, this.getBlitOffset(), -1);
     }
 
     protected void detectBorder() {}
 
     protected void resetColor() {
         if (this.active) {
-            RenderSystem.setShaderColor(this.r, this.g, this.b, this.a);
+            RenderSystem.color4f(this.r, this.g, this.b, this.a);
         } else {
             float chroma = 160F / 255;
 
-            RenderSystem.setShaderColor(this.r * chroma, this.g * chroma, this.b * chroma, this.a);
+            RenderSystem.color4f(this.r * chroma, this.g * chroma, this.b * chroma, this.a);
         }
     }
 }

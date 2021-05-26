@@ -1,36 +1,37 @@
 package user11681.cell.client.gui.screen;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import java.util.Collection;
 import java.util.List;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.AbstractButtonWidget;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.client.gui.widget.button.AbstractButton;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.lwjgl.opengl.GL11;
 import user11681.cell.Cell;
 import user11681.cell.client.gui.DrawableElement;
 
 @SuppressWarnings("unchecked")
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public abstract class CellScreen extends Screen implements DrawableElement {
     public final ReferenceArrayList<DrawableElement> elements = new ReferenceArrayList<>();
 
     protected CellScreen() {
-        this(LiteralText.EMPTY);
+        this(StringTextComponent.EMPTY);
     }
 
-    protected CellScreen(Text title) {
+    protected CellScreen(ITextComponent title) {
         super(title);
     }
 
@@ -71,70 +72,70 @@ public abstract class CellScreen extends Screen implements DrawableElement {
     }
 
     @Override
-    public List<? extends Element> children() {
+    public List<? extends IGuiEventListener> children() {
         return this.elements;
     }
 
-    protected <T extends AbstractButtonWidget> void removeButtons(T... buttons) {
+    protected <T extends AbstractButton> void removeButtons(T... buttons) {
         for (T button : buttons) {
             this.removeButton(button);
         }
     }
 
-    protected <T extends Collection<U>, U extends AbstractButtonWidget> void removeButtons(T buttons) {
+    protected <T extends Collection<U>, U extends AbstractButton> void removeButtons(T buttons) {
         this.buttons.removeAll(buttons);
     }
 
-    protected <T extends AbstractButtonWidget> void removeButton(T button) {
+    protected <T extends AbstractButton> void removeButton(T button) {
         this.buttons.remove(button);
     }
 
     @Override
-    protected <T extends AbstractButtonWidget> T addButton(T button) {
+    protected <T extends Widget> T addButton(T button) {
         return super.addButton(button);
     }
 
-    public void renderBackground(Identifier identifier, int x, int y, int width, int height) {
+    public void renderBackground(ResourceLocation identifier, int x, int y, int width, int height) {
         this.renderBackground(identifier, x, y, width, height, 64, 0);
     }
 
-    public void renderBackground(Identifier identifier, int x, int y, int width, int height, int chroma) {
+    public void renderBackground(ResourceLocation identifier, int x, int y, int width, int height, int chroma) {
         this.renderBackground(identifier, x, y, width, height, chroma, 0);
     }
 
-    public void renderBackground(Identifier identifier, int x, int y, int width, int height, int chroma, int alpha) {
+    public void renderBackground(ResourceLocation identifier, int x, int y, int width, int height, int chroma, int alpha) {
         Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder builder = tessellator.getBuffer();
+        BufferBuilder builder = tessellator.getBuilder();
         float f = 1 << 5;
         float endX = x + width;
         float endY = y + height;
 
-        Cell.textureManager.bindTexture(identifier);
-        RenderSystem.setShaderColor(1, 1, 1, 1);
+        Cell.textureManager.bind(identifier);
+        RenderSystem.color4f(1, 1, 1, 1);
 
-        builder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE);
-        builder.vertex(x, endY, 0).color(chroma, chroma, chroma, 255).texture(0, endY / f + alpha).next();
-        builder.vertex(endX, endY, 0).color(chroma, chroma, chroma, 255).texture(endX / f, endY / f + alpha).next();
-        builder.vertex(endX, y, 0).color(chroma, chroma, chroma, 255).texture(endX / f, alpha).next();
-        builder.vertex(x, y, 0).color(chroma, chroma, chroma, 255).texture(0, alpha).next();
+        builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR_TEX);
+        builder.vertex(x, endY, 0).color(chroma, chroma, chroma, 255).uv(0, endY / f + alpha).endVertex();
+        builder.vertex(endX, endY, 0).color(chroma, chroma, chroma, 255).uv(endX / f, endY / f + alpha).endVertex();
+        builder.vertex(endX, y, 0).color(chroma, chroma, chroma, 255).uv(endX / f, alpha).endVertex();
+        builder.vertex(x, y, 0).color(chroma, chroma, chroma, 255).uv(0, alpha).endVertex();
 
-        tessellator.draw();
+        tessellator.end();
     }
 
     public void renderGuiItem(ItemStack itemStack, int x, int y, int z) {
-        this.withZ(z, () -> this.itemRenderer.renderGuiItemIcon(itemStack, x, y));
+        this.withZ(z, () -> this.itemRenderer.renderGuiItem(itemStack, x, y));
     }
 
     public void withZ(int z, Runnable runnable) {
         this.addZOffset(z);
-        this.itemRenderer.zOffset = this.getZOffset();
+        this.itemRenderer.blitOffset = this.getBlitOffset();
         runnable.run();
         this.addZOffset(-z);
-        this.itemRenderer.zOffset = this.getZOffset();
+        this.itemRenderer.blitOffset = this.getBlitOffset();
     }
 
     public void addZOffset(int z) {
-        this.zOffset += z;
-        this.itemRenderer.zOffset += z;
+        this.setBlitOffset(this.getBlitOffset() + z);
+        this.itemRenderer.blitOffset += z;
     }
 }

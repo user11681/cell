@@ -1,10 +1,10 @@
 package user11681.cell.client.gui.widget.callback;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import user11681.cell.client.gui.widget.Widget;
 
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public interface PressCallback<T extends Widget<T>> {
     void onPress(T widget);
 }

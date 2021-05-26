@@ -1,20 +1,20 @@
 package user11681.cell.client.gui.widget;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import java.util.Arrays;
 import java.util.List;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.font.TextHandler;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.sound.SoundManager;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.client.audio.SimpleSound;
+import net.minecraft.client.audio.SoundHandler;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.IGuiEventListener;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.text.CharacterManager;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.glfw.GLFW;
 import user11681.cell.Cell;
 import user11681.cell.client.gui.CellElement;
@@ -24,15 +24,15 @@ import user11681.cell.client.gui.widget.callback.TooltipProvider;
 import user11681.cell.client.gui.widget.callback.TooltipRenderer;
 
 @SuppressWarnings("unchecked")
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public abstract class Widget<T extends Widget<T>> extends CellElement {
-    protected static final SoundManager soundManager = Cell.client.getSoundManager();
-    protected static final TextRenderer textRenderer = Cell.client.textRenderer;
-    protected static final TextHandler textHandler = textRenderer.getTextHandler();
+    protected static final SoundHandler soundManager = Cell.client.getSoundManager();
+    protected static final FontRenderer textRenderer = Cell.client.font;
+    protected static final CharacterManager textHandler = textRenderer.getSplitter();
 
     public List<CellElement> children = ReferenceArrayList.wrap(new CellElement[0]);
 
-    public Text text = LiteralText.EMPTY;
+    public ITextComponent text = StringTextComponent.EMPTY;
     public PressCallback<T> primaryAction;
     public PressCallback<T> secondaryAction;
     public PressCallback<T> tertiaryAction;
@@ -84,10 +84,10 @@ public abstract class Widget<T extends Widget<T>> extends CellElement {
     }
 
     public T text(String text) {
-        return this.text(new TranslatableText(text));
+        return this.text(new TranslationTextComponent(text));
     }
 
-    public T text(Text text) {
+    public T text(ITextComponent text) {
         this.text = text;
         this.modified = true;
 
@@ -117,14 +117,14 @@ public abstract class Widget<T extends Widget<T>> extends CellElement {
     }
 
     public T tooltip(String tooltip) {
-        return this.tooltip((T widget, int mouseX, int mouseY) -> new TranslatableText(tooltip));
+        return this.tooltip((T widget, int mouseX, int mouseY) -> new TranslationTextComponent(tooltip));
     }
 
-    public T tooltip(Text... tooltip) {
+    public T tooltip(ITextComponent... tooltip) {
         return this.tooltip(Arrays.asList(tooltip));
     }
 
-    public T tooltip(List<Text> tooltip) {
+    public T tooltip(List<ITextComponent> tooltip) {
         return this.tooltip((T widget, int mouseX, int mouseY) -> tooltip);
     }
 
@@ -165,7 +165,7 @@ public abstract class Widget<T extends Widget<T>> extends CellElement {
     }
 
     @Override
-    public List<? extends Element> children() {
+    public List<? extends IGuiEventListener> children() {
         return this.children;
     }
 
@@ -215,7 +215,7 @@ public abstract class Widget<T extends Widget<T>> extends CellElement {
 
     public void renderForeground(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         if (this.text != null) {
-            drawCenteredText(matrices, textRenderer, this.text, this.getX() + this.width / 2, this.getY() + this.height / 2 - textRenderer.fontHeight / 2, 0xFFFFFF);
+            drawCenteredString(matrices, textRenderer, this.text, this.getX() + this.width / 2, this.getY() + this.height / 2 - textRenderer.lineHeight / 2, 0xFFFFFF);
         }
     }
 
@@ -326,7 +326,7 @@ public abstract class Widget<T extends Widget<T>> extends CellElement {
     }
 
     public void playSound() {
-        soundManager.play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1));
+        soundManager.play(SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
     }
 
     protected void compute() {

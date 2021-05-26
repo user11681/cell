@@ -1,16 +1,15 @@
 package test;
 
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.TranslatableText;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import user11681.cell.client.gui.screen.CellScreen;
 import user11681.cell.client.gui.widget.scalable.ScalableWidget;
 import user11681.cell.client.gui.widget.scalable.ScalableWidgets;
 
-@SuppressWarnings("ConstantConditions")
 public class TestScreen extends CellScreen {
     public TestScreen() {
-        super(LiteralText.EMPTY);
+        super(StringTextComponent.EMPTY);
     }
 
     @Override
@@ -22,10 +21,10 @@ public class TestScreen extends CellScreen {
             .y(this.height / 2)
             .width(200)
             .height(20)
-            .tooltip((ScalableWidget widge, int mouseX, int mouseY) -> new TranslatableText("%s, %s", mouseX, mouseY))
-            .primaryAction((ScalableWidget widge) -> widge.text(new LiteralText("left click")))
-            .secondaryAction((ScalableWidget widge) -> widge.text(new LiteralText("right click")))
-            .tertiaryAction((ScalableWidget widge) -> widge.width(widge.width + 10).height(widge.height + 4).text(new LiteralText("middle click")));
+            .tooltip((ScalableWidget widge, int mouseX, int mouseY) -> new TranslationTextComponent("%s, %s", mouseX, mouseY))
+            .primaryAction((ScalableWidget widge) -> widge.text(new StringTextComponent("left click")))
+            .secondaryAction((ScalableWidget widge) -> widge.text(new StringTextComponent("right click")))
+            .tertiaryAction((ScalableWidget widge) -> widge.width(widge.width + 10).height(widge.height + 4).text(new StringTextComponent("middle click")));
 
         this.add(widget);
     }

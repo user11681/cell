@@ -1,10 +1,10 @@
 package user11681.cell.client.gui;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.screen.TickableElement;
+import net.minecraft.client.gui.IGuiEventListener;
+import net.minecraft.client.gui.IRenderable;
+import net.minecraft.client.renderer.texture.ITickable;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-@Environment(EnvType.CLIENT)
-public interface DrawableElement extends Drawable, Element, TickableElement {}
+@OnlyIn(Dist.CLIENT)
+public interface DrawableElement extends IRenderable, IGuiEventListener, ITickable {}

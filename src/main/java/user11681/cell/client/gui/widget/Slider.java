@@ -1,36 +1,36 @@
 package user11681.cell.client.gui.widget;
 
 import java.text.NumberFormat;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.client.gui.widget.AbstractSlider;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import user11681.cell.client.gui.DrawableElement;
 
-@Environment(EnvType.CLIENT)
-public class Slider extends SliderWidget implements DrawableElement {
+@OnlyIn(Dist.CLIENT)
+public class Slider extends AbstractSlider implements DrawableElement {
     protected static final NumberFormat floatFormat = NumberFormat.getNumberInstance();
 
-    public Text label;
+    public ITextComponent label;
     public ScrollCallback onScroll;
 
     protected double min;
     protected double max;
     protected double range;
     protected double scaledValue;
-    protected double lost;
+    protected double remainder;
 
     public boolean discrete;
 
     public Slider() {
-        super(0, 0, 0, 0, LiteralText.EMPTY, 0);
+        super(0, 0, 0, 0, StringTextComponent.EMPTY, 0);
     }
 
-    public Slider(int x, int y, int width, int height, double value, double min, double max, Text label) {
+    public Slider(int x, int y, int width, int height, double value, double min, double max, ITextComponent label) {
         super(x, y, width, height, label, (value - min) / (max - min));
 
         this.label = label;
@@ -108,9 +108,9 @@ public class Slider extends SliderWidget implements DrawableElement {
                 : 0.01 * this.range;
 
         if (this.discrete) {
-            double newAddition = Math.ceil(Math.abs(addition)) + (long) this.lost;
+            double newAddition = Math.ceil(Math.abs(addition)) + (long) this.remainder;
 
-            this.lost += addition - newAddition;
+            this.remainder += addition - newAddition;
 
             addition = newAddition;
         }
@@ -124,7 +124,7 @@ public class Slider extends SliderWidget implements DrawableElement {
     protected void updateMessage() {
         Object formattedValue = this.discrete || Math.abs(this.scaledValue) >= 100 ? (long) this.scaledValue : floatFormat.format(this.scaledValue);
 
-        this.setMessage(this.label == LiteralText.EMPTY ? new TranslatableText("%s", formattedValue) : new TranslatableText("%s:%s", this.label, formattedValue));
+        this.setMessage(this.label == StringTextComponent.EMPTY ? new TranslationTextComponent("%s", formattedValue) : new TranslationTextComponent("%s:%s", this.label, formattedValue));
     }
 
     @Override

@@ -1,9 +1,9 @@
 package user11681.cell.client.gui.widget.scalable;
 
-import net.minecraft.client.texture.AbstractTexture;
-import net.minecraft.client.texture.ResourceTexture;
-import net.minecraft.client.texture.TextureManager;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.texture.SimpleTexture;
+import net.minecraft.client.renderer.texture.Texture;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.util.ResourceLocation;
 import user11681.cell.Cell;
 
 public class ScalableTextureInfo {
@@ -11,18 +11,18 @@ public class ScalableTextureInfo {
     public final int[][][] corners = new int[4][4][2];
     public final int[][] border = new int[4][2];
 
-    public AbstractTexture texture;
+    public Texture texture;
 
     public int u;
     public int v;
 
-    public ScalableTextureInfo texture(Identifier texture) {
+    public ScalableTextureInfo texture(ResourceLocation texture) {
         TextureManager textureManager = Cell.textureManager;
-        AbstractTexture abstractTexture = textureManager.getTexture(texture);
+        Texture abstractTexture = textureManager.getTexture(texture);
 
         if (abstractTexture == null) {
-            abstractTexture = new ResourceTexture(texture);
-            textureManager.registerTexture(texture, abstractTexture);
+            abstractTexture = new SimpleTexture(texture);
+            textureManager.register(texture, abstractTexture);
         }
 
         this.texture = abstractTexture;
@@ -30,7 +30,7 @@ public class ScalableTextureInfo {
         return this;
     }
 
-    public ScalableTextureInfo texture(AbstractTexture texture) {
+    public ScalableTextureInfo texture(Texture texture) {
         this.texture = texture;
 
         return this;

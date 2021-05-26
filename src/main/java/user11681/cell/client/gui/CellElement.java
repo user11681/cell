@@ -1,20 +1,20 @@
 package user11681.cell.client.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.AbstractParentElement;
-import net.minecraft.client.gui.screen.TickableElement;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.BufferRenderer;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Matrix4f;
+import net.minecraft.client.gui.FocusableGui;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldVertexBufferUploader;
+import net.minecraft.client.renderer.texture.ITickable;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import org.lwjgl.opengl.GL11;
 
-@Environment(EnvType.CLIENT)
-public abstract class CellElement extends AbstractParentElement implements DrawableElement, TickableElement, Cloneable {
+@OnlyIn(Dist.CLIENT)
+public abstract class CellElement extends FocusableGui implements DrawableElement, ITickable, Cloneable {
     public int x;
     public int y;
 
@@ -22,7 +22,7 @@ public abstract class CellElement extends AbstractParentElement implements Drawa
     public int height;
 
     public static void fill(MatrixStack matrices, int x1, int y1, int x2, int y2, float z, int color) {
-        fill(matrices.peek().getModel(), x1, y1, x2, y2, z, color);
+        fill(matrices.last().pose(), x1, y1, x2, y2, z, color);
     }
 
     public static void fill(Matrix4f matrix, int x1, int y1, int x2, int y2, float z, int color) {
@@ -44,20 +44,20 @@ public abstract class CellElement extends AbstractParentElement implements Drawa
         final float r = (color >> 16 & 255) / 255F;
         final float g = (color >> 8 & 255) / 255F;
         final float b = (color & 255) / 255F;
-        final BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+        final BufferBuilder bufferBuilder = Tessellator.getInstance().getBuilder();
 
         RenderSystem.enableBlend();
         RenderSystem.disableTexture();
         RenderSystem.defaultBlendFunc();
 
-        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-        bufferBuilder.vertex(matrix, x1, y2, z).color(r, g, b, a).next();
-        bufferBuilder.vertex(matrix, x2, y2, z).color(r, g, b, a).next();
-        bufferBuilder.vertex(matrix, x2, y1, z).color(r, g, b, a).next();
-        bufferBuilder.vertex(matrix, x1, y1, z).color(r, g, b, a).next();
+        bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        bufferBuilder.vertex(matrix, x1, y2, z).color(r, g, b, a).endVertex();
+        bufferBuilder.vertex(matrix, x2, y2, z).color(r, g, b, a).endVertex();
+        bufferBuilder.vertex(matrix, x2, y1, z).color(r, g, b, a).endVertex();
+        bufferBuilder.vertex(matrix, x1, y1, z).color(r, g, b, a).endVertex();
         bufferBuilder.end();
 
-        BufferRenderer.draw(bufferBuilder);
+        WorldVertexBufferUploader.end(bufferBuilder);
         RenderSystem.enableTexture();
         RenderSystem.disableBlend();
     }

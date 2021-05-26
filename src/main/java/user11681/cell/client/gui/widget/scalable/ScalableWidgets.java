@@ -1,11 +1,11 @@
 package user11681.cell.client.gui.widget.scalable;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 
 public final class ScalableWidgets {
-    private static final Identifier widgets = new Identifier("textures/gui/widgets.png");
-    private static final Identifier advancementWidgets = new Identifier("textures/gui/advancements/widgets.png");
-    private static final Identifier window = new Identifier("textures/gui/advancements/window.png");
+    private static final ResourceLocation widgets = new ResourceLocation("textures/gui/widgets.png");
+    private static final ResourceLocation advancementWidgets = new ResourceLocation("textures/gui/advancements/widgets.png");
+    private static final ResourceLocation window = new ResourceLocation("textures/gui/advancements/window.png");
 
     private static final ScalableTextureInfo inactiveButtonInfo = new ScalableTextureInfo().texture(widgets).position(0, 46).slices(1, 199, 200, 1, 19, 20);
     private static final ScalableTextureInfo windowInfo = new ScalableTextureInfo().texture(window).slices(14, 238, 252, 22, 126, 140);

@@ -1,19 +1,41 @@
-plugins {
-    id("wheel").version("0-SNAPSHOT").apply(false)
-}
-
-group("user11681")
-version("0.0.0")
-
-allprojects {
-    plugins.apply("wheel")
+buildscript {
+    repositories {
+        maven {url = "https://files.minecraftforge.net/maven"}
+        maven {url = "https://repo.spongepowered.org/repository/maven-public"}
+    }
 
     dependencies {
-        modInclude("api-base")
-        modInclude("api-resource-loader")
+        classpath("net.minecraftforge.gradle:ForgeGradle:4+")
+        classpath("org.spongepowered:mixingradle:0.7-SNAPSHOT")
     }
 }
 
-loom {
-    accessWidener("src/main/resources/cell.accesswidener")
+plugins {
+    id("java-library")
+    id("maven-publish")
+}
+
+plugins.apply("net.minecraftforge.gradle")
+plugins.apply("org.spongepowered.mixin")
+
+group = "user11681"
+version = "0.0.0"
+
+repositories {
+    mavenCentral()
+
+    maven {url = "https://auoeke.jfrog.io/artifactory/maven"}
+}
+
+dependencies {
+    minecraft("net.minecraftforge:forge:1.16.5-36.1.23")
+}
+
+minecraft {
+    mappings("official", "1.16.5")
+}
+
+tasks.compileJava.configure {
+    sourceCompatibility = 8
+    targetCompatibility = 8
 }

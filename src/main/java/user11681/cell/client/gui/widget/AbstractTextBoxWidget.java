@@ -1,21 +1,19 @@
 package user11681.cell.client.gui.widget;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.mojang.blaze3d.matrix.MatrixStack;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.StringVisitable;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import java.util.ArrayList;
+import java.util.List;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.glfw.GLFW;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public abstract class AbstractTextBoxWidget<T extends AbstractTextBoxWidget<T>> extends Widget<T> {
     protected static final Int2IntMap shifted = new Int2IntOpenHashMap();
     static {
@@ -45,7 +43,7 @@ public abstract class AbstractTextBoxWidget<T extends AbstractTextBoxWidget<T>> 
 
     protected final StringBuffer text = new StringBuffer();
 
-    protected List<StringVisitable> lines = new ArrayList<>();
+    protected List<ITextProperties> lines = new ArrayList<>();
 
     protected int insideWidth;
     protected int textX;
@@ -70,10 +68,10 @@ public abstract class AbstractTextBoxWidget<T extends AbstractTextBoxWidget<T>> 
     }
 
     protected void renderText(MatrixStack matrices) {
-        final List<StringVisitable> lines = this.lines;
+        final List<ITextProperties> lines = this.lines;
 
         for (int i = 0, size = lines.size(); i < size; i++) {
-            final StringVisitable line = lines.get(i);
+            final ITextProperties line = lines.get(i);
 
             textRenderer.draw(matrices, line.getString(), this.textX, this.getY(i), 0xFFFFFF);
         }
@@ -84,7 +82,7 @@ public abstract class AbstractTextBoxWidget<T extends AbstractTextBoxWidget<T>> 
     }
 
     protected int getY(int line) {
-        return this.textY + line * (textRenderer.fontHeight + 3);
+        return this.textY + line * (textRenderer.lineHeight + 3);
     }
 
     @Override
@@ -176,7 +174,7 @@ public abstract class AbstractTextBoxWidget<T extends AbstractTextBoxWidget<T>> 
                 this.text.insert(this.index++, (char) keyCode);
         }
 
-        this.lines = textHandler.wrapLines(this.text.toString(), this.insideWidth - 4, Style.EMPTY);
+        this.lines = textHandler.splitLines(this.text.toString(), this.insideWidth - 4, Style.EMPTY);
         this.updateCaret();
 
         return false;
@@ -189,7 +187,7 @@ public abstract class AbstractTextBoxWidget<T extends AbstractTextBoxWidget<T>> 
             this.caretX = this.textX;
             this.caretY = this.textY;
         } else {
-            this.caretX = this.textX + textRenderer.getWidth(this.lines.get(size - 1).getString().substring(0, this.index));
+            this.caretX = this.textX + textRenderer.width(this.lines.get(size - 1).getString().substring(0, this.index));
             this.caretY = this.getY(this.column);
         }
     }
@@ -201,13 +199,13 @@ public abstract class AbstractTextBoxWidget<T extends AbstractTextBoxWidget<T>> 
     public enum Caret {
         UNDERSCORE("_");
 
-        final Text character;
+        final ITextComponent character;
 
         Caret(String character) {
-            this(new LiteralText(character));
+            this(new StringTextComponent(character));
         }
 
-        Caret(Text character) {
+        Caret(ITextComponent character) {
             this.character = character;
         }
     }
